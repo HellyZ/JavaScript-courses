@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport">
+  <title>Document</title>
+  <script     
+  src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+</script>
+<script src="script.js"></script>
+</head>
+<body>
+
+    <form class="figureType">
+      <h2>Choose figure:</h2>
+
+      <input type="radio" class="figures" name="figures" id="circle">
+      <label for="circle">Circle</label>
+
+      <input type="radio" class="figures" name="figures" id="square">
+      <label for="square">Square</label>
+
+      <input type="radio" class="figures" name="figures" id="ellipse">
+      <label for="ellipse">Ellipse</label>
+
+      <input type="radio" class="figures" name="figures" id="rectangle">
+      <label for="rectangle">Rectangle</label>
+    </form>
+    <br>
+    <form id="figureVars" name="figureVarsForm">
+      <!-- var 1 -->
+      <label class="firstInput" for="var1">Variable 1:</label>
+      <input type="number" class="firstInput" id="var1">
+      <!-- var 2 -->
+      <label class="secondInput" for="var2">Variable 2:</label>
+      <input type="number" class="secondInput" id="var2" class="2">
+    </form>
+
+  <div class="figure_view"></div>
+  
+
+
+</body>
+</html>
