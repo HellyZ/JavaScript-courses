@@ -1,104 +1,104 @@
+class Size {
+  constructor(name, viewName, price) {
+    this.name = name;
+    this.viewName = viewName;
+    this.price = price;
+    this.isChecked = false;
+  }
+}
+
+
 class BurgerModel {
   constructor() {
-    this._sizes = [{
-        id: 'size_small',
-        name: 'Small',
+    this.sizes = [
+      new Size('size_small', 'Small', 70),
+      new Size('size_medium', 'Medium', 90),
+      new Size('size_large', 'Large', 120)
+    ]
+    this.stuffings = [{
+        viewName: 'Chicken',
+        name: 'stuffing_chicken',
         price: 70,
-        isChosen: false
+        isChecked: false
       },
       {
-        id: 'size_medium',
-        name: 'Medium',
+        viewName: 'Pork',
+        name: 'stuffing_pork',
         price: 90,
-        isChosen: false
+        isChecked: false
       },
       {
-        id: 'size_large',
-        name: 'Large',
+        viewName: 'Beef',
+        name: 'stuffing_beef',
         price: 120,
-        isChosen: false
+        isChecked: false
       }
     ]
-    this._stuffings = [{
-        id: 'stuffing_chicken',
-        name: 'Chicken',
-        price: 70,
-        isChosen: false
-      },
-      {
-        id: 'stuffing_pork',
-        name: 'Pork',
-        price: 90,
-        isChosen: false
-      },
-      {
-        id: 'stuffing_beef',
-        name: 'Beef',
-        price: 120,
-        isChosen: false
-      }
-    ]
-    this._sauces = [{
-        id: 'sauce_cheese',
-        name: 'Cheese',
+    this.sauces = [{
+        name: 'sauce_cheese',
         price: 10
       },
       {
-        id: 'sauce_bbq',
-        name: 'BBQ',
+        name: 'sauce_bbq',
         price: 10
       },
       {
-        id: 'sauce_ukr',
-        name: 'Ukrainian',
+        name: 'sauce_ukr',
         price: 10
       }
     ]
-    this._chosenSize = this._sizes[1].id;
-    this._chosenStuffing = this._stuffings[0].id;
-    this._chosenSauces = this._sauces[1].id;
+    this.sizes[1].isChecked = true;
+    this.stuffings[1].isChecked = true;
+    this.currentSauces = [];
   }
 
   getSizes(cb) {
-    // getting sizes from the server ...
-    cb(this._sizes);
+    // make AJAX call .......
+    cb(this.sizes);
   }
 
   getStuffings(cb) {
-
-    cb(this._stuffings);
+    // make AJAX call .......
+    cb(this.stuffings);
   }
-
-  getSauces(cb) {
-    cb(this._sauces);
-  }
-
 
   getBurgerData(cb) {
-    let burgerData = {
-      size: this._sizes.find(s => s.id === this._chosenSize),
-      stuffing: this._stuffings.find(s => s.id === this._chosenStuffing),
-      sauce: this._sauces.find(s => s.id === this._chosenSauces)
+    let data = {
+      size: this.sizes.find(s => s.isChecked),
+      stuffing: this.stuffings.find(s => s.isChecked)
     }
     if (cb) {
-      cb(burgerData);
+      cb(data);
     }
-    return burgerData;
+    return data;
   }
 
-  changeSize(sizeId, cb) {
-    this._chosenSize = sizeId;
-    cb();
+  changeSize(sizeName, cb) {
+    this.sizes.forEach(s => s.isChecked = false);
+    this.sizes.find(s => s.name === sizeName).isChecked = true;
+    cb(this.getBurgerData());
   }
 
-  changeStuffing(stuffingId, cb) {
-    this._chosenStuffing = stuffingId;
-    cb();
+  changeStuffing(stuffingName, cb) {
+    this.stuffings.forEach(s => s.isChecked = false);
+    this.stuffings.find(s => s.name === stuffingName).isChecked = true;
+    cb(this.getBurgerData());
   }
 
-  changeSauce(sauceId, cb) {
-    this._chosenSauces = sauceId;
-    cb();
+  addSauce(sauceName) {
+    let sauce = this.sauces.find(s => s.name === sauceName);
+    let foundSauce = this.currentSauces.find(s => s.name === sauceName);
+
+    !foundSauce ?
+      this.currentSauces.push(sauce) :
+      console.log('Такой соус уже есть');
   }
 
+  removeSauce(sauceName) {
+    let foundSauceIndex = this.currentSauces.findIndex(s => s.name === sauceName);
+
+    foundSauceIndex !== -1 ?
+      this.currentSauces.splice(foundSauceIndex, 1) :
+      console.log('Такого соуса вообще нет');
+  }
 }
