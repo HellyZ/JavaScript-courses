@@ -1,103 +1,68 @@
 class BurgerView {
-  constructor(appName) {
-    this._appName = appName;
+
+  constructor() {
     this._selectors = {
-      sizes$: $(`[data-module="${this._appName}"] .burger__sizes`),
-      stuffings$: $(`[data-module="${this._appName}"] .burger__stuffings`),
-      sauces$: $(`[data-module="${this._appName}"] .burger__sauces`),
-      burderData$: $(`[data-module="${this._appName}"] .burger__data`),
+      sizes$: $('.burger__sizes'),
+      stuffings$: $('.burger__stuffings'),
+      preview$: $('.burger-preview')
     }
     this._templates = {
-      sizeInput: `
+      size: `
         <label>
-          <input {{isChecked}} name="burger_size" type="radio" value="{{id}}">
-          {{name}}
+          {{viewName}}
+          <input name="size" type="radio" value="{{name}}" {{isChecked}}>
         </label>
       `,
-      stuffingDefaultOption: `
-        <option value="0">Choose stuffing</option>
+      stuffing: `
+        <option value="{{name}}">{{viewName}}</option>
       `,
-      stuffingOption: `
-        <option value="{{id}}">{{name}}</option>
-      `,
-      saucesDefaultOption: `
-       <option value="0">Choose sauces</option>
-      `,
-      saucesOption: `
-        <option value="{{id}}">{{name}}</option>
-      `,
-      burgerData: `
-        <h1>SIZE: {{size}}</h1>
-        <h2>STUFFING: {{stuffing}}</h2>
-        <h2>SAUCES: {{sauce}}</h2>
+      preview: `
+        <div class="burger-preview__size">Size: {{sizeViewName}}</div>
+        <div class="burger-preview__stuffing">Stuffing: {{stuffingViewName}}</div>
       `
     }
   }
 
-  renderSizes(sizes, chosenSize) {
-    sizes.forEach(s => {
-      let template = this._templates.sizeInput
-        .replace('{{name}}', s.name)
-        .replace('{{id}}', s.id)
-        .replace('{{isChecked}}', s.id === chosenSize.id ? 'checked' : '');
+  renderSizes(sizes) {
+    sizes.forEach(size => {
+      let template = this._templates.size
+        .replace('{{viewName}}', size.viewName)
+        .replace('{{name}}', size.name)
+        .replace('{{isChecked}}', size.isChecked ? 'checked' : '');
       this._selectors.sizes$.append(template);
     });
   }
 
-  renderStuffings(stuffings, chosenStuffing) {
-    this._selectors.stuffings$.append(this._templates.stuffingDefaultOption);
+  renderStuffings(stuffings) {
     stuffings.forEach(s => {
-      let template = this._templates.stuffingOption
+      let template = this._templates.stuffing
         .replace('{{name}}', s.name)
-        .replace('{{id}}', s.id);
-      // .replace('{{isChecked}}', s.isChosen ? 'checked' : '');
+        .replace('{{viewName}}', s.viewName);
       this._selectors.stuffings$.append(template);
-      if (s.id === chosenStuffing.id) {
-        this._selectors.stuffings$.val(s.id);
-      }
-    })
-  }
-
-  renderSauces(sauces, chosenSauce) {
-    this._selectors.sauces$.append(this._templates.saucesDefaultOption);
-    sauces.forEach(s => {
-      let template = this._templates.saucesOption
-        .replace('{{name}}', s.name)
-        .replace('{{id}}', s.id);
-      this._selectors.sauces$.append(template);
-      if (s.id === chosenSauce.id) {
-        this._selectors.sauces$.val(s.id);
-      }
-    })
+    });
+    this._selectors.stuffings$.val(stuffings.find(s => s.isChecked).name)
   }
 
   renderBurgerData(burgerData) {
-    let template = this._templates.burgerData
-      .replace('{{size}}', burgerData.size.name)
-      .replace('{{stuffing}}', burgerData.stuffing.name)
-      .replace('{{sauce}}', burgerData.sauce.name)
-    this._selectors.burderData$.html(template);
+    let template = this._templates.preview
+      .replace('{{sizeViewName}}', burgerData.size.viewName)
+      .replace('{{stuffingViewName}}', burgerData.stuffing.viewName);
+    this._selectors.preview$.html(template)
   }
 
   listenSizeChange(cb) {
-    this._selectors.sizes$.on('change', '[name="burger_size"]', function () {
-      let id = $(this).val();
-      cb(id)
+    let self = this;
+    self._selectors.sizes$.on('change', '[name=size]', function () {
+      const sizeName = $(this).val();
+      cb(sizeName);
     })
   }
 
   listenStuffingChange(cb) {
-    this._selectors.stuffings$.change(function () {
-      let id = $(this).val();
-      cb(id);
+    let self = this;
+    self._selectors.stuffings$.on('change', function () {
+      const stuffingName = $(this).val();
+      cb(stuffingName);
     })
   }
-
-  listenSauceChange(cb) {
-    this._selectors.sauces$.change(function () {
-      let id = $(this).val();
-      cb(id);
-    })
-  }
-
 }
